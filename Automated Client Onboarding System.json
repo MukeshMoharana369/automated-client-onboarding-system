@@ -1,0 +1,692 @@
+{
+  "name": "Automated Client Onboarding System",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1sX1gS2agxhpK72nTXexoOznbuiIuXWCK8s7AyvHAERU",
+          "mode": "list",
+          "cachedResultName": "Client Onboarding Form (Responses)",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sX1gS2agxhpK72nTXexoOznbuiIuXWCK8s7AyvHAERU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 2032674104,
+          "mode": "list",
+          "cachedResultName": "Form Responses 1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sX1gS2agxhpK72nTXexoOznbuiIuXWCK8s7AyvHAERU/edit#gid=2032674104"
+        },
+        "event": "rowAdded",
+        "options": {}
+      },
+      "id": "4e0ff8b7-a606-4da2-94a7-bbb98dfa20b1",
+      "name": "New Client Form Submission",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -5088,
+        256
+      ],
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "dxMpuWMxFUZhro1A",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "clientsFolderId",
+              "value": "dummy-folder-123",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "notionDatabaseId",
+              "value": "dummy-notion-db-456",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "trackingSheetId",
+              "value": "dummy-sheet-789",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "errorChannelId",
+              "value": "dummy-slack-channel-000",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ccfe9b58-856a-43fb-94f9-0c578a8a79de",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -4864,
+        256
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "={{ $json['Company Name'] }} - {{ $json['Which service or package did you purchase?'] }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "root",
+          "mode": "list",
+          "cachedResultName": "/ (Root folder)",
+          "cachedResultUrl": "https://drive.google.com/drive"
+        },
+        "options": {}
+      },
+      "id": "fef06f13-b5bf-427d-a484-bbaf50539dfa",
+      "name": "Create Client Folder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4640,
+        256
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iXN9lRKbU4SlaFwN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "Assets",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "ce4c40e2-aebd-4e64-862e-5323e6dc0d53",
+      "name": "Create Assets Subfolder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4416,
+        256
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iXN9lRKbU4SlaFwN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "Reports",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "d7a0a867-f906-42b9-ba04-2076dfc2546b",
+      "name": "Create Reports Subfolder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -4192,
+        256
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iXN9lRKbU4SlaFwN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "folder",
+        "name": "Contracts",
+        "driveId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "My Drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "={{ $('Create Client Folder').item.json.id }}",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "id": "b7d07187-2eec-4bc6-9667-83f9984e832f",
+      "name": "Create Contracts Subfolder",
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        -3968,
+        256
+      ],
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "iXN9lRKbU4SlaFwN",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "2a58bbe3-aa60-80cf-af3e-e4a5d2cdc2e7",
+          "mode": "list",
+          "cachedResultName": "dummy-notion-db-456",
+          "cachedResultUrl": "https://www.notion.so/2a58bbe3aa6080cfaf3ee4a5d2cdc2e7"
+        },
+        "title": "={{ $('New Client Form Submission').item.json['Company Name'] }} - {{ $('New Client Form Submission').item.json['Which service or package did you purchase?'] }}",
+        "simple": false,
+        "options": {}
+      },
+      "id": "bbd9b5e6-ce33-4a18-af75-831713787121",
+      "name": "Create Notion Dashboard",
+      "type": "n8n-nodes-base.notion",
+      "typeVersion": 2.2,
+      "position": [
+        -3744,
+        256
+      ],
+      "credentials": {
+        "notionApi": {
+          "id": "NCdHHTq6bNhlbTxG",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "resource": "channel",
+        "channelId": "=client-{{ $('New Client Form Submission').item.json['Company Name'].toLowerCase().replace(/\\s+/g, '-') }}"
+      },
+      "id": "81883c83-b974-4312-accb-d86f6e0702cd",
+      "name": "Create Slack Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -3520,
+        256
+      ],
+      "webhookId": "7f03f29e-8c6b-484e-976f-a19fcdee6b08",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RP1yovQt3TbETvWK",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Create Slack Channel').first().json.id }}"
+        },
+        "text": "=🎉 *New Client Onboarded: {{ $('New Client Form Submission').item.json['Company Name'] }}*\n\n*Client Details:*\n• Name: {{ $('New Client Form Submission').item.json['Full Name'] }}\n• Email: {{ $('New Client Form Submission').item.json['Business Email Address'] }}\n• Service: {{ $('New Client Form Submission').item.json['Which service or package did you purchase?'] }}\n\n*Project Goals:*\n{{ $('New Client Form Submission').item.json['Describe your project goals or requirements. Briefly explain what you\\'d like us to help you achieve.'] }}\n\n*Resources:*\n• 📁 Drive Folder: {{ $('Create Client Folder').first().json.webViewLink }}\n• 📋 Notion Dashboard: {{ $('Create Notion Dashboard').first().json.url }}\n\nLet's deliver amazing results! 🚀",
+        "otherOptions": {}
+      },
+      "id": "74a1d7ef-a79a-4a5b-a9b9-aa448163821d",
+      "name": "Post Channel Summary",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -3296,
+        256
+      ],
+      "webhookId": "45deb7ab-f779-4973-8e74-b70030b1c862",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RP1yovQt3TbETvWK",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Generate a warm, professional welcome email for a new client with the following details:\n\nClient Name: {{ $('New Client Form Submission').item.json['Full Name'] }}\nCompany: {{ $('New Client Form Submission').item.json['Company Name'] }}\nService: {{ $('New Client Form Submission').item.json['Which service or package did you purchase?'] }}\nProject Goals: {{ $('New Client Form Submission').item.json['Describe your project goals or requirements. Briefly explain what you’d like us to help you achieve.'] }}\nDrive Folder: {{ $('Create Client Folder').item.json.id }}\nNotion Dashboard: {{ $('Create Notion Dashboard').first().json.url }}\n\nThe email should:\n- Welcome them warmly\n- Reference their specific company and project goals\n- Provide links to their Drive folder and Notion dashboard\n- Explain next steps\n- Sound natural and personalized\n- Be professional but friendly\n\nReturn only the email body text, no subject line."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "options": {}
+      },
+      "id": "15a2c82f-c1f0-4e40-8f32-c6b95c473a0e",
+      "name": "Generate Welcome Email",
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        -3072,
+        256
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "fxAroahKzqPetXC8",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('New Client Form Submission').item.json['Business Email Address'] }}",
+        "subject": "=Welcome to {{ $('New Client Form Submission').item.json['Which service or package did you purchase?'] }} - Let's Get Started!",
+        "message": "={{ $json.content.parts[0].text }}",
+        "options": {}
+      },
+      "id": "214bb50b-77c7-4209-bc71-34db13fbcdfb",
+      "name": "Send Welcome Email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        -2720,
+        256
+      ],
+      "webhookId": "983f02ae-5af3-4304-8362-a813867ee40d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "naWXA9C1GteFopoZ",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "dummy-sheet-789"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Onboarding Log"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now.toISO() }}",
+            "Client Name": "={{ $('New Client Form Submission').item.json['Full Name'] }}",
+            "Company": "={{ $('New Client Form Submission').item.json['Company Name'] }}",
+            "Email": "={{ $('New Client Form Submission').item.json['Business Email Address'] }}",
+            "Service": "={{ $('New Client Form Submission').item.json['Which service or package did you purchase?'] }}",
+            "Drive Folder": "={{ $('Create Client Folder').first().json.webViewLink }}",
+            "Notion URL": "={{ $('Create Notion Dashboard').first().json.url }}",
+            "Slack Channel": "={{ $('Create Slack Channel').first().json.name }}"
+          },
+          "matchingColumns": [
+            "Client Name"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Client Name",
+              "displayName": "Client Name",
+              "required": false,
+              "defaultMatch": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Company",
+              "displayName": "Company",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Service",
+              "displayName": "Service",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Drive Folder",
+              "displayName": "Drive Folder",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notion URL",
+              "displayName": "Notion URL",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Slack Channel",
+              "displayName": "Slack Channel",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "43a3d00f-d87e-4f74-bd23-6c144990906f",
+      "name": "Log to Tracking Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -2272,
+        160
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "4imvPQ4nmeQps7Q0",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "={{ $('Workflow Configuration').first().json.errorChannelId }}"
+        },
+        "text": "=🚨 *Onboarding Error Alert*\n\n*Client:* {{ $('New Client Form Submission').item.json['Company Name'] }}\n*Error:* {{ $json.error }}\n*Timestamp:* {{ $now.toISO() }}\n\nPlease investigate and complete onboarding manually.",
+        "otherOptions": {}
+      },
+      "id": "29a244c8-4e50-45da-9264-69b964f08667",
+      "name": "Send Error Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        -2272,
+        352
+      ],
+      "webhookId": "02824921-24c5-4c9f-b2fa-2f1f2b446c20",
+      "credentials": {
+        "slackOAuth2Api": {
+          "id": "RP1yovQt3TbETvWK",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.labelIds[0] }}",
+              "operator": {
+                "type": "string",
+                "operation": "exists"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "7998bb8d-cf2a-4ca1-b83f-59fadd77bee9",
+      "name": "Check for Errors",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -2496,
+        256
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "New Client Form Submission": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Create Client Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Client Folder": {
+      "main": [
+        [
+          {
+            "node": "Create Assets Subfolder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Assets Subfolder": {
+      "main": [
+        [
+          {
+            "node": "Create Reports Subfolder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Reports Subfolder": {
+      "main": [
+        [
+          {
+            "node": "Create Contracts Subfolder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Contracts Subfolder": {
+      "main": [
+        [
+          {
+            "node": "Create Notion Dashboard",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Notion Dashboard": {
+      "main": [
+        [
+          {
+            "node": "Create Slack Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create Slack Channel": {
+      "main": [
+        [
+          {
+            "node": "Post Channel Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Post Channel Summary": {
+      "main": [
+        [
+          {
+            "node": "Generate Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Send Welcome Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Welcome Email": {
+      "main": [
+        [
+          {
+            "node": "Check for Errors",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check for Errors": {
+      "main": [
+        [
+          {
+            "node": "Log to Tracking Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Error Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "92b2423c-c4a4-4f7d-9d4b-dd403bd59151",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7710ff9f153d410d5b117487f4996b34b2541cd8b5c6e7f9884fa3099093407b"
+  },
+  "id": "IzhWmeIhXebYg71H",
+  "tags": []
+}
